@@ -4,13 +4,13 @@
     {
         public int Id { get; set; }
 
-        public User EstateAgent { get; set; }
-
-        public string? City { get; set; }
+        public int EstateAgentId { get; set; }
 
         public string Name { get; set; }
 
-        public string? PhoneNumber { get; set; }
+        public string City { get; set; }
+
+        public string PhoneNumber { get; set; }
 
         public int EmployeeCount { get; set; }
     }

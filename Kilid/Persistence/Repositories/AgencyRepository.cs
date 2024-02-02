@@ -1,6 +1,7 @@
 ﻿using Kilid.Interfaces;
 using Dapper;
 using Kilid.Entities;
+using System.Data.Common;
 
 namespace Kilid.Persistence.Repositories
 {
@@ -13,96 +14,108 @@ namespace Kilid.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<int> Authentication(string username, string password)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("username", username);
-            parameters.Add("password", password);
-
-            var query = "SELECT Id FROM EstateAgents WHERE Username = @username AND Password = @password;";
-
-            var id =  await _dbContext.Connection.QueryFirstAsync<int>(query, parameters);
-
-            return id;
-        }
-
-        public async Task CreateEstateAgent(int id, string phoneNumber)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("id", id);
-            parameters.Add("phoneNumber", phoneNumber);
-
-            var query = "INSERT INTO EstateAgents(Id, PhoneNumber)VALUES(@id, @phoneNumber);";
-
-            await _dbContext.Connection.QueryFirstAsync(query, parameters);
-        }
-
-        public async Task<EstateAgent> GetById(int id)
+        public async Task<User> GetEstateAgentById(int id)
         {
             var parameters = new DynamicParameters();
             parameters.Add("id", id);
 
-            var query = "SELECT * FROM EstateAgents WHERE Id = @id;";
+            var query = "SELECT * FROM Users WHERE Id = @id;";
 
-            var estateAgent = await _dbContext.Connection.QueryFirstAsync<EstateAgent>(query, parameters);
+            var estateAgent = await _dbContext.Connection.QueryFirstAsync<User>(query, parameters);
 
             return estateAgent;
         }
 
-        public async Task Update(int id, EstateAgent estateAgent)
+        public async Task<Advertisement> GetAdvertisementById(int id)
         {
             var parameters = new DynamicParameters();
             parameters.Add("id", id);
-            parameters.Add("firstName", estateAgent.FirstName);
-            parameters.Add("lastName", estateAgent.LastName);
-            parameters.Add("username", estateAgent.Username);
-            parameters.Add("password", estateAgent.Password);
-            parameters.Add("email", estateAgent.Email);
-            parameters.Add("phoneNumber", estateAgent.PhoneNumber);
-            parameters.Add("city", estateAgent.City);
-            parameters.Add("agencyName", estateAgent.AgencyName);
-            parameters.Add("agencyPhoneNumber", estateAgent.AgencyPhoneNumber);
-            parameters.Add("employeeCount", estateAgent.EmployeeCount);
 
-            var query = "UPDATE EstateAgents " +
-                "SET FirstName = @firstName, LastName = @lastName, " +
-                "Username = @username, Password = @password, " +
-                "Email = @email, PhoneNumber = @phoneNumber," +
-                "City = @city, AgencyName = @agencyName," +
-                "AgencyPhoneNumber = @agencyPhoneNumber, EmployeeCount = @employeeCount" +
-                "WHERE Id = @id;";
+            var query = "SELECT * FROM Advertisements WHERE Id = @id;";
 
-            await _dbContext.Connection.QueryFirstAsync(query, parameters);
+            var advertisement = await _dbContext.Connection.QueryFirstAsync<Advertisement>(query, parameters);
 
+            return advertisement;
         }
 
-        public async Task CreateAdvertisement(int AdvertisementId, int buildingId)
+        public async Task CreateAdvertisement(Advertisement advertisement)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("id", AdvertisementId);
-            parameters.Add("buildingId", buildingId);
+            parameters.Add("id", advertisement.Id);
+            parameters.Add("buildingId", advertisement.BuildingId);
+            parameters.Add("text", advertisement.Text);
 
-            var query = "INSERT INTO Advertisements(Id, PhoneNumber)VALUES(@id, @buildingId);";
+            var query = "INSERT INTO Advertisements(Id, BuildingId, Text) " +
+                "VALUES(@id, @buildingId, @text)";
 
-            await _dbContext.Connection.QueryFirstAsync(query, parameters);
+           await _dbContext.Connection.QueryFirstOrDefaultAsync(query, parameters);
         }
 
-        public async Task<List<Advertisement>> GetAllAdvertisements()
+        public async Task<IEnumerable<Advertisement>> GetAllAdvertisements()
         {
             var query = "SELECT * FROM Advertisements;";
 
-            var advertisements = await _dbContext.Connection.QueryFirstAsync<List<Advertisement>>(query);
+            var advertisements = await _dbContext.Connection.QueryAsync<Advertisement>(query);
 
             return advertisements;
         }
 
-        public async Task<List<EstateAgent>> GetAllEstateAgents()
+        public async Task<IEnumerable<Agency>> GetAllAgencies()
         {
-            var query = "SELECT * FROM EstateAgents;";
+            var query = "SELECT * FROM Agency;";
 
-            var estateAgents = await _dbContext.Connection.QueryFirstAsync<List<EstateAgent>>(query);
+            var agencies = await _dbContext.Connection.QueryAsync<Agency>(query);
 
-            return estateAgents;
+            return agencies;
         }
+
+
+        public async Task UpdateEstateAgentProfile(User user)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("id", user.Id);
+            parameters.Add("firstName", user.FirstName);
+            parameters.Add("lastName", user.LastName);
+            parameters.Add("password", user.Password);
+            parameters.Add("email", user.Email);
+            parameters.Add("phoneNumber", user.PhoneNumber);
+
+            var query = "UPDATE Users SET FirstName = @firstName, LastName = @lastName, " +
+                        "Password = @password, Email = @email, PhoneNumber = @phoneNumber " +
+                        "WHERE Id = @id;";
+
+            await _dbContext.Connection.ExecuteAsync(query, parameters);
+        }
+
+        public async Task UpdateAgencyProfile(Agency agency)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("id", agency.Id);
+            parameters.Add("estateAgentId", agency.EstateAgentId);
+            parameters.Add("name", agency.Name);
+            parameters.Add("city", agency.City);
+            parameters.Add("phoneNumber", agency.PhoneNumber);
+            parameters.Add("employeeCount", agency.EmployeeCount);
+
+            var query = "UPDATE Agency SET EstateAgentId = @estateAgentId, Name = @name, " +
+                        "City = @city, PhoneNumber = @phoneNumber, EmployeeCount = @employeeCount " +
+                        "WHERE Id = @id;";
+
+            await _dbContext.Connection.ExecuteAsync(query, parameters);
+        }
+
+        public async Task UpdateAdvertisement(Advertisement advertisement)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("id", advertisement.Id);
+            parameters.Add("buildingId", advertisement.BuildingId);
+            parameters.Add("text", advertisement.Text);
+
+            var query = "UPDATE Advertisements SET Text = @Text, BuildingId = @buildingId " +
+                        "WHERE Id = @id;";
+
+            await _dbContext.Connection.ExecuteAsync(query, parameters);
+        }
+
     }
 }
