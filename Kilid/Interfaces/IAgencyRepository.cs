@@ -2,7 +2,7 @@
 
 namespace Kilid.Interfaces
 {
-    public interface IEstateAgentRepository
+    public interface IAgencyRepository
     {
         Task<int> Authentication(string username, string password);
 

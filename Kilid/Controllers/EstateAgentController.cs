@@ -8,9 +8,9 @@ namespace Kilid.Controllers
     [ApiController]
     public class EstateAgentController : ControllerBase
     {
-        private readonly IEstateAgentRepository _estateAgent;
+        private readonly IAgencyRepository _estateAgent;
 
-        public EstateAgentController(IEstateAgentRepository estateAgent)
+        public EstateAgentController(IAgencyRepository estateAgent)
         {
             _estateAgent = estateAgent;
         }

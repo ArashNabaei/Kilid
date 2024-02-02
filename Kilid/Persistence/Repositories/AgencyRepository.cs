@@ -4,11 +4,11 @@ using Kilid.Entities;
 
 namespace Kilid.Persistence.Repositories
 {
-    public class EstateAgentRepository : IEstateAgentRepository
+    public class AgencyRepository : IAgencyRepository
     {
         private readonly DbContext _dbContext;
 
-        public EstateAgentRepository(DbContext dbContext)
+        public AgencyRepository(DbContext dbContext)
         {
             _dbContext = dbContext;
         }
