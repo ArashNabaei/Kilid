@@ -4,7 +4,7 @@ namespace Kilid.Interfaces
 {
     public interface IAgencyRepository
     {
-        Task<User> GetEstateAgentById(int id);
+        Task<User> GetManagerById(int id);
 
         Task<Advertisement> GetAdvertisementById(int id);
 
@@ -16,9 +16,19 @@ namespace Kilid.Interfaces
 
         Task UpdateAgencyProfile(Agency agency);
 
-        Task UpdateEstateAgentProfile(User user);
+        Task UpdateManagerProfile(User user);
 
         Task UpdateAdvertisement(Advertisement advertisement);
+
+        Task CreateAddress(Address address);
+
+        Task UpdateAddress(Address address);
+
+        Task<IEnumerable<Advertisement>> LastAdvertisements();
+
+        Task DeleteAdvertisement(int id);
+
+        Task DeleteAddress(int id);
 
     }
 }

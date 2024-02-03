@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public int EstateAgentId { get; set; }
+        public int ManagerId { get; set; }
 
         public string Name { get; set; }
 

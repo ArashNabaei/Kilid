@@ -8,35 +8,27 @@ namespace Kilid.Controllers
     [ApiController]
     public class AgencyController : ControllerBase
     {
-        private readonly IAgencyRepository _Agency;
+        private readonly IAgencyRepository _agency;
 
         public AgencyController(IAgencyRepository agency)
         {
-            _Agency = agency;
+            _agency = agency;
         }
 
-
-        [HttpGet("GetEstateAgentById")]
-        public async Task<IActionResult> GetEstateAgentById(int id)
-        {
-            var estateAgent = await _Agency.GetEstateAgentById(id);
-
-            return Ok(estateAgent);
-        }
+        #region Advertisement
 
         [HttpGet("GetAdvertisementById")]
         public async Task<IActionResult> GetAdvertisementById(int id)
         {
-            var advertisement = await _Agency.GetAdvertisementById(id);
+            var advertisement = await _agency.GetAdvertisementById(id);
 
             return Ok(advertisement);
         }
 
-
         [HttpPost("CreateAdvertisement")]
         public async Task<IActionResult> CreateAdvertisement([FromBody] Advertisement advertisement)
         {
-            await _Agency.CreateAdvertisement(advertisement);
+            await _agency.CreateAdvertisement(advertisement);
 
             return Ok();
 
@@ -45,23 +37,51 @@ namespace Kilid.Controllers
         [HttpGet("GetAllAdvertisements")]
         public async Task<IActionResult> GetAllAdvertisements()
         {
-            var result = await _Agency.GetAllAdvertisements();
+            var result = await _agency.GetAllAdvertisements();
 
             return Ok(result);
         }
+
+        [HttpGet("LastAdvertisements")]
+        public async Task<IActionResult> LastAdvertisements()
+        {
+            var result = await _agency.LastAdvertisements();
+
+            return Ok(result);
+        }
+
+        [HttpPut("UpdateAdvertisement")]
+        public async Task<IActionResult> UpdateAdvertisement(Advertisement advertisement)
+        {
+            await _agency.UpdateAdvertisement(advertisement);
+
+            return Ok();
+        }
+
+        [HttpDelete("DeleteAdvertisement")]
+        public async Task<IActionResult> DeleteAdvertisement(int id)
+        {
+            await _agency.DeleteAdvertisement(id);
+
+            return Ok();
+        }
+
+        #endregion
+
+        #region Agency
 
         [HttpGet("GetAllAgencies")]
         public async Task<IActionResult> GetAllAgencies()
         {
-            var result = await _Agency.GetAllAgencies();
+            var result = await _agency.GetAllAgencies();
 
             return Ok(result);
         }
 
-        [HttpPut("UpdateEstateAgentProfile")]
-        public async Task<IActionResult> UpdateEstateAgentProfile(User user)
+        [HttpPut("UpdateManagerProfile")]
+        public async Task<IActionResult> UpdateManagerProfile(User user)
         {
-            await _Agency.UpdateEstateAgentProfile(user);
+            await _agency.UpdateManagerProfile(user);
 
             return Ok();
         }
@@ -69,18 +89,48 @@ namespace Kilid.Controllers
         [HttpPut("UpdateAgencyProfile")]
         public async Task<IActionResult> UpdateAgencyProfile(Agency agency)
         {
-            await _Agency.UpdateAgencyProfile(agency);
+            await _agency.UpdateAgencyProfile(agency);
 
             return Ok();
         }
 
-        [HttpPut("UpdateAdvertisement")]
-        public async Task<IActionResult> UpdateAdvertisement(Advertisement advertisement)
+        [HttpGet("GetManagerById")]
+        public async Task<IActionResult> GetManagerById(int id)
         {
-            await _Agency.UpdateAdvertisement(advertisement);
+            var estateAgent = await _agency.GetManagerById(id);
+
+            return Ok(estateAgent);
+        }
+
+        #endregion
+
+        #region Address
+
+        [HttpPost("CreateAddress")]
+        public async Task<IActionResult> CreateAddress(Address address)
+        {
+            await _agency.CreateAddress(address);
 
             return Ok();
         }
+
+        [HttpPut("UpdateAddress")]
+        public async Task<IActionResult> UpdateAddress(Address address)
+        {
+            await _agency.UpdateAddress(address);
+
+            return Ok();
+        }
+
+        [HttpDelete("DeleteAddress")]
+        public async Task<IActionResult> DeleteAddress(int id)
+        {
+            await _agency.DeleteAddress(id);
+
+            return Ok();
+        }
+
+        #endregion
 
     }
 

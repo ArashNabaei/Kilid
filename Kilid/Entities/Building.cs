@@ -4,8 +4,6 @@
     {
         public int Id { get; set; }
 
-        public string? Address { get; set; }
-
         public int Area { get; set; }
 
         public bool IsRentable { get; set; }
@@ -20,6 +18,7 @@
 
         public int Age { get; set; }
 
-        public string Photo { get; set; }
+        public string ImageURL { get; set; }
+
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Kilid.Interfaces;
 using Dapper;
 using Kilid.Entities;
-using System.Data.Common;
 
 namespace Kilid.Persistence.Repositories
 {
@@ -14,7 +13,7 @@ namespace Kilid.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<User> GetEstateAgentById(int id)
+        public async Task<User> GetManagerById(int id)
         {
             var parameters = new DynamicParameters();
             parameters.Add("id", id);
@@ -43,10 +42,13 @@ namespace Kilid.Persistence.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("id", advertisement.Id);
             parameters.Add("buildingId", advertisement.BuildingId);
-            parameters.Add("text", advertisement.Text);
+            parameters.Add("title", advertisement.Title);
+            parameters.Add("description", advertisement.Description);
+            parameters.Add("conditions", advertisement.Conditions);
+            parameters.Add("features", advertisement.Features);
 
-            var query = "INSERT INTO Advertisements(Id, BuildingId, Text) " +
-                "VALUES(@id, @buildingId, @text)";
+            var query = "INSERT INTO Advertisements(Id, BuildingId, Title, Description, Conditions, Features) " +
+                "VALUES(@id, @buildingId, @title, @description, @conditions, @features)";
 
            await _dbContext.Connection.QueryFirstOrDefaultAsync(query, parameters);
         }
@@ -69,8 +71,7 @@ namespace Kilid.Persistence.Repositories
             return agencies;
         }
 
-
-        public async Task UpdateEstateAgentProfile(User user)
+        public async Task UpdateManagerProfile(User user)
         {
             var parameters = new DynamicParameters();
             parameters.Add("id", user.Id);
@@ -91,13 +92,13 @@ namespace Kilid.Persistence.Repositories
         {
             var parameters = new DynamicParameters();
             parameters.Add("id", agency.Id);
-            parameters.Add("estateAgentId", agency.EstateAgentId);
+            parameters.Add("managerId", agency.ManagerId);
             parameters.Add("name", agency.Name);
             parameters.Add("city", agency.City);
             parameters.Add("phoneNumber", agency.PhoneNumber);
             parameters.Add("employeeCount", agency.EmployeeCount);
 
-            var query = "UPDATE Agency SET EstateAgentId = @estateAgentId, Name = @name, " +
+            var query = "UPDATE Agency SET ManagerId = @managerId, Name = @name, " +
                         "City = @city, PhoneNumber = @phoneNumber, EmployeeCount = @employeeCount " +
                         "WHERE Id = @id;";
 
@@ -109,13 +110,73 @@ namespace Kilid.Persistence.Repositories
             var parameters = new DynamicParameters();
             parameters.Add("id", advertisement.Id);
             parameters.Add("buildingId", advertisement.BuildingId);
-            parameters.Add("text", advertisement.Text);
+            parameters.Add("title", advertisement.Title);
+            parameters.Add("description", advertisement.Description);
+            parameters.Add("conditions", advertisement.Conditions);
+            parameters.Add("features", advertisement.Features);
 
-            var query = "UPDATE Advertisements SET Text = @Text, BuildingId = @buildingId " +
+            var query = "UPDATE Advertisements SET Title = @title, BuildingId = @buildingId " +
+                "Description = @description, Conditions = @conditions, Features = @features" +
                         "WHERE Id = @id;";
 
             await _dbContext.Connection.ExecuteAsync(query, parameters);
         }
 
+        public async Task CreateAddress(Address address)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("id", address.Id);
+            parameters.Add("city", address.City);
+            parameters.Add("neighbor", address.Neighbor);
+
+            var query = "INSERT INTO Address(Id, City, Neighbor) " +
+                "VALUES(@id, @city, @neighbor)";
+
+            await _dbContext.Connection.QueryFirstOrDefaultAsync(query, parameters);
+        }
+
+        public async Task UpdateAddress(Address address)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("id", address.Id);
+            parameters.Add("city", address.City);
+            parameters.Add("neighbor", address.Neighbor);
+
+            var query = "UPDATE Address SET City = @city, Neighbor= @neighbor " +
+                        "WHERE Id = @id;";
+
+            await _dbContext.Connection.ExecuteAsync(query, parameters);
+        }
+
+        public async Task<IEnumerable<Advertisement>> LastAdvertisements()
+        {
+            var query = "SELECT TOP 5 * FROM Advertisements ORDER BY Id DESC;";
+
+            var advertisements = await _dbContext.Connection.QueryAsync<Advertisement>(query);
+
+            return advertisements;
+        }
+
+        public async Task DeleteAdvertisement(int id)
+        {
+            var query = "DELETE FROM Advertisements " +
+                "WHERE Id = @id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id);
+
+            await _dbContext.Connection.ExecuteAsync(query, parameters);
+        }
+
+        public async Task DeleteAddress(int id)
+        {
+            var query = "DELETE FROM Address " +
+                "WHERE Id = @id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id);
+
+            await _dbContext.Connection.ExecuteAsync(query, parameters);
+        }
     }
 }
