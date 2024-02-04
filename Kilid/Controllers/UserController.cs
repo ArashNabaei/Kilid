@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kilid.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class UserController : ControllerBase
     {
 
@@ -36,17 +38,10 @@ namespace Kilid.Controllers
             return Ok(users);
         }
         
-        [HttpDelete("DeleteUser")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            await _user.DeleteUser(id);
-            return Ok();
-        }
-
         [HttpPut("UpdateUser")]
-        public async Task<IActionResult> UpdateUser([FromBody] User user)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
         {
-            await _user.UpdateUser(user);
+            await _user.UpdateUser(id, user);
 
             return Ok();
         }
@@ -114,6 +109,15 @@ namespace Kilid.Controllers
                 area, price, roomsCount, age);
 
             return Ok(buildings);
+        }
+
+
+        [HttpGet("PopularSearches")]
+        public async Task<IActionResult> PopularSearches(string content)
+        {
+            var result = await _user.PopularSearches(content);
+            
+            return Ok(result);
         }
 
     }

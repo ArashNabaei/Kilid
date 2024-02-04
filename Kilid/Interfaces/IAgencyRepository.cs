@@ -14,15 +14,13 @@ namespace Kilid.Interfaces
 
         Task<IEnumerable<Agency>> GetAllAgencies();
 
-        Task UpdateAgencyProfile(Agency agency);
+        Task UpdateAgencyProfile(int id, Agency agency);
 
-        Task UpdateManagerProfile(User user);
+        Task UpdateManagerProfile(int id,User user);
 
-        Task UpdateAdvertisement(Advertisement advertisement);
+        Task UpdateAdvertisement(int id, Advertisement advertisement);
 
         Task<IEnumerable<Advertisement>> LastAdvertisements();
-
-        Task DeleteAdvertisement(int id);
 
     }
 }

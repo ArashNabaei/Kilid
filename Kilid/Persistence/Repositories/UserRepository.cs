@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Kilid.Entities;
 using Kilid.Interfaces;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 
 namespace Kilid.Persistence.Repositories
 {
@@ -13,31 +14,21 @@ namespace Kilid.Persistence.Repositories
             _dbContext = dbContext;
         }
 
-        
+
         public async Task CreateUser(User user)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("id", user.Id);
             parameters.Add("firstName", user.FirstName);
             parameters.Add("lastName", user.LastName);
             parameters.Add("email", user.Email);
             parameters.Add("phoneNumber", user.PhoneNumber);
             parameters.Add("password", user.Password);
 
-            var query = "INSERT INTO Users (Id, FirstName, LastName, Email, PhoneNumber, Password) " +
-                "VALUES(@id, @firstName, @lastName, @email, @phoneNumber, @password);";
+            var query = "INSERT INTO Users (FirstName, LastName, Email, PhoneNumber, Password) " +
+                        "VALUES (@firstName, @lastName, @email, @phoneNumber, @password);" +
+                        "SELECT SCOPE_IDENTITY();";
 
-            await _dbContext.Connection.QueryFirstOrDefaultAsync(query, parameters);
-        }
-
-        public async Task DeleteUser(int id)
-        {
-            var query = "DELETE FROM Users WHERE ID = @id;";
-            
-            var parameters = new DynamicParameters();
-            parameters.Add("id", id);
-
-            await _dbContext.Connection.ExecuteAsync(query, parameters);
+            user.Id = await _dbContext.Connection.QuerySingleOrDefaultAsync<int>(query, parameters);
         }
 
         public async Task<User> GetUserById(int id)
@@ -60,10 +51,10 @@ namespace Kilid.Persistence.Repositories
             return users;
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUser(int id, User user)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("id", user.Id);
+            parameters.Add("id", id);
 
             parameters.Add("firstName", user.FirstName);
             parameters.Add("lastName", user.LastName);
@@ -227,5 +218,48 @@ namespace Kilid.Persistence.Repositories
             return buildings;
         }
 
+        public async Task<User> GetUserByPhoneNumberAsync(string phoneNumber)
+        {
+            return await _dbContext.Connection.QueryFirstOrDefaultAsync<User>(
+                "SELECT * FROM Users WHERE PhoneNumber = @phoneNumber",
+                new { phoneNumber }
+            );
+
+        }
+
+        public async Task AddUserAsync(User user)
+        {
+
+            var query = "INSERT INTO Users (FirstName, LastName, Password, Email, PhoneNumber, BuildingId) " +
+                        "VALUES (@firstName, @lastName, @password, @email, @phoneNumber, @buildingId)";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("firstName", user.FirstName);
+            parameters.Add("lastName", user.LastName);
+            parameters.Add("email", user.Email);
+            parameters.Add("phoneNumber", user.PhoneNumber);
+            parameters.Add("password", user.Password);
+            parameters.Add("buildingId", user.BuildingId);
+
+            await _dbContext.Connection.ExecuteAsync(query, parameters);
+        }
+
+        public async Task<IEnumerable<Search>> PopularSearches(string content)
+        {
+            var query = $"SELECT TOP 5 * " +
+                $"FROM Search " +
+                $"WHERE LOWER(Content) LIKE LOWER(CONCAT('%', @content, '%')) " +
+                $"ORDER BY Count DESC;";
+
+            var patternWithWildcards = $"%{content.ToLower()}%";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("content", patternWithWildcards);
+
+
+            var searches = await _dbContext.Connection.QueryAsync<Search>(query, parameters);
+
+            return searches;
+        }
     }
 }

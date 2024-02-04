@@ -7,9 +7,7 @@ namespace Kilid.Interfaces
 
         Task CreateUser(User user);
         
-        Task UpdateUser(User user);
-        
-        Task DeleteUser(int id);
+        Task UpdateUser(int id, User user);
         
         Task<User> GetUserById(int id);
 
@@ -30,6 +28,12 @@ namespace Kilid.Interfaces
         Task<IEnumerable<Building>> SearchBuildingsByFilter(
             bool? isRentable, bool? isBuyable, bool? isFullRentable, int? area, 
             float? price, int? roomsCount, int? age);
+
+        Task<User> GetUserByPhoneNumberAsync(string phoneNumber);
+
+        Task AddUserAsync(User user);
+
+        Task<IEnumerable<Search>> PopularSearches(string content);
 
     }
 }

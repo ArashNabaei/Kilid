@@ -1,6 +1,7 @@
 using Kilid.Interfaces;
 using Kilid.Persistence;
 using Kilid.Persistence.Repositories;
+using Kilid.Services;
 
 namespace Kilid
 {
@@ -14,6 +15,7 @@ namespace Kilid
 
             builder.Services.AddScoped<IAgencyRepository, AgencyRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<DbContext>();
 
             builder.Services.AddControllers();

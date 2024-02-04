@@ -40,15 +40,14 @@ namespace Kilid.Persistence.Repositories
         public async Task CreateAdvertisement(Advertisement advertisement)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("id", advertisement.Id);
             parameters.Add("buildingId", advertisement.BuildingId);
             parameters.Add("title", advertisement.Title);
             parameters.Add("description", advertisement.Description);
             parameters.Add("conditions", advertisement.Conditions);
             parameters.Add("features", advertisement.Features);
 
-            var query = "INSERT INTO Advertisements(Id, BuildingId, Title, Description, Conditions, Features) " +
-                "VALUES(@id, @buildingId, @title, @description, @conditions, @features)";
+            var query = "INSERT INTO Advertisements(BuildingId, Title, Description, Conditions, Features) " +
+                "VALUES(@buildingId, @title, @description, @conditions, @features)";
 
            await _dbContext.Connection.QueryFirstOrDefaultAsync(query, parameters);
         }
@@ -71,10 +70,10 @@ namespace Kilid.Persistence.Repositories
             return agencies;
         }
 
-        public async Task UpdateManagerProfile(User user)
+        public async Task UpdateManagerProfile(int id, User user)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("id", user.Id);
+            parameters.Add("id", id);
             parameters.Add("firstName", user.FirstName);
             parameters.Add("lastName", user.LastName);
             parameters.Add("password", user.Password);
@@ -88,10 +87,10 @@ namespace Kilid.Persistence.Repositories
             await _dbContext.Connection.ExecuteAsync(query, parameters);
         }
 
-        public async Task UpdateAgencyProfile(Agency agency)
+        public async Task UpdateAgencyProfile(int id, Agency agency)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("id", agency.Id);
+            parameters.Add("id", id);
             parameters.Add("managerId", agency.ManagerId);
             parameters.Add("name", agency.Name);
             parameters.Add("city", agency.City);
@@ -105,10 +104,10 @@ namespace Kilid.Persistence.Repositories
             await _dbContext.Connection.ExecuteAsync(query, parameters);
         }
 
-        public async Task UpdateAdvertisement(Advertisement advertisement)
+        public async Task UpdateAdvertisement(int id, Advertisement advertisement)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("id", advertisement.Id);
+            parameters.Add("id", id);
             parameters.Add("buildingId", advertisement.BuildingId);
             parameters.Add("title", advertisement.Title);
             parameters.Add("description", advertisement.Description);
@@ -129,17 +128,6 @@ namespace Kilid.Persistence.Repositories
             var advertisements = await _dbContext.Connection.QueryAsync<Advertisement>(query);
 
             return advertisements;
-        }
-
-        public async Task DeleteAdvertisement(int id)
-        {
-            var query = "DELETE FROM Advertisements " +
-                "WHERE Id = @id";
-
-            var parameters = new DynamicParameters();
-            parameters.Add("id", id);
-
-            await _dbContext.Connection.ExecuteAsync(query, parameters);
         }
 
     }

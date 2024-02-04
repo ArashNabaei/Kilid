@@ -51,17 +51,9 @@ namespace Kilid.Controllers
         }
 
         [HttpPut("UpdateAdvertisement")]
-        public async Task<IActionResult> UpdateAdvertisement(Advertisement advertisement)
+        public async Task<IActionResult> UpdateAdvertisement(int id, Advertisement advertisement)
         {
-            await _agency.UpdateAdvertisement(advertisement);
-
-            return Ok();
-        }
-
-        [HttpDelete("DeleteAdvertisement")]
-        public async Task<IActionResult> DeleteAdvertisement(int id)
-        {
-            await _agency.DeleteAdvertisement(id);
+            await _agency.UpdateAdvertisement(id, advertisement);
 
             return Ok();
         }
@@ -79,17 +71,17 @@ namespace Kilid.Controllers
         }
 
         [HttpPut("UpdateManagerProfile")]
-        public async Task<IActionResult> UpdateManagerProfile(User user)
+        public async Task<IActionResult> UpdateManagerProfile(int id, User user)
         {
-            await _agency.UpdateManagerProfile(user);
+            await _agency.UpdateManagerProfile(id, user);
 
             return Ok();
         }
 
         [HttpPut("UpdateAgencyProfile")]
-        public async Task<IActionResult> UpdateAgencyProfile(Agency agency)
+        public async Task<IActionResult> UpdateAgencyProfile(int id, Agency agency)
         {
-            await _agency.UpdateAgencyProfile(agency);
+            await _agency.UpdateAgencyProfile(id, agency);
 
             return Ok();
         }
