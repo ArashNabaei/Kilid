@@ -20,15 +20,9 @@ namespace Kilid.Interfaces
 
         Task UpdateAdvertisement(Advertisement advertisement);
 
-        Task CreateAddress(Address address);
-
-        Task UpdateAddress(Address address);
-
         Task<IEnumerable<Advertisement>> LastAdvertisements();
 
         Task DeleteAdvertisement(int id);
-
-        Task DeleteAddress(int id);
 
     }
 }

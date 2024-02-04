@@ -104,34 +104,6 @@ namespace Kilid.Controllers
 
         #endregion
 
-        #region Address
-
-        [HttpPost("CreateAddress")]
-        public async Task<IActionResult> CreateAddress(Address address)
-        {
-            await _agency.CreateAddress(address);
-
-            return Ok();
-        }
-
-        [HttpPut("UpdateAddress")]
-        public async Task<IActionResult> UpdateAddress(Address address)
-        {
-            await _agency.UpdateAddress(address);
-
-            return Ok();
-        }
-
-        [HttpDelete("DeleteAddress")]
-        public async Task<IActionResult> DeleteAddress(int id)
-        {
-            await _agency.DeleteAddress(id);
-
-            return Ok();
-        }
-
-        #endregion
-
     }
 
 }

@@ -13,6 +13,7 @@ namespace Kilid
             // Add services to the container.
 
             builder.Services.AddScoped<IAgencyRepository, AgencyRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<DbContext>();
 
             builder.Services.AddControllers();

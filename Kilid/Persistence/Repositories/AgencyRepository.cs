@@ -115,34 +115,8 @@ namespace Kilid.Persistence.Repositories
             parameters.Add("conditions", advertisement.Conditions);
             parameters.Add("features", advertisement.Features);
 
-            var query = "UPDATE Advertisements SET Title = @title, BuildingId = @buildingId " +
-                "Description = @description, Conditions = @conditions, Features = @features" +
-                        "WHERE Id = @id;";
-
-            await _dbContext.Connection.ExecuteAsync(query, parameters);
-        }
-
-        public async Task CreateAddress(Address address)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("id", address.Id);
-            parameters.Add("city", address.City);
-            parameters.Add("neighbor", address.Neighbor);
-
-            var query = "INSERT INTO Address(Id, City, Neighbor) " +
-                "VALUES(@id, @city, @neighbor)";
-
-            await _dbContext.Connection.QueryFirstOrDefaultAsync(query, parameters);
-        }
-
-        public async Task UpdateAddress(Address address)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("id", address.Id);
-            parameters.Add("city", address.City);
-            parameters.Add("neighbor", address.Neighbor);
-
-            var query = "UPDATE Address SET City = @city, Neighbor= @neighbor " +
+            var query = "UPDATE Advertisements SET Title = @title, BuildingId = @buildingId, " +
+                "Description = @description, Conditions = @conditions, Features = @features " +
                         "WHERE Id = @id;";
 
             await _dbContext.Connection.ExecuteAsync(query, parameters);
@@ -168,15 +142,5 @@ namespace Kilid.Persistence.Repositories
             await _dbContext.Connection.ExecuteAsync(query, parameters);
         }
 
-        public async Task DeleteAddress(int id)
-        {
-            var query = "DELETE FROM Address " +
-                "WHERE Id = @id";
-
-            var parameters = new DynamicParameters();
-            parameters.Add("id", id);
-
-            await _dbContext.Connection.ExecuteAsync(query, parameters);
-        }
     }
 }
